@@ -43,9 +43,14 @@
       id: '1',
       title: '1. Was ist HTML?',
       kind: 'info',
-      text: `HTML ist die Struktur-Sprache des Webs. Tags wie <html>, <body>, <h1> und <p> geben dem Browser an, was angezeigt werden soll.
-      Nach der Theorie gehst du gleich zur Praxis: fang mit einer Überschrift und einem Absatz an.`,
-      check: ()=>({ok:true, message:'Verstanden, lass uns schreiben!'}),
+      text: `HTML steht für "HyperText Markup Language". Damit beschreiben Menschen dem Browser, wie eine Webseite aufgebaut ist.
+      - "HyperText" bedeutet: Text, der mit Links verbunden ist.
+      - "Markup" bedeutet: Kennzeichnungen (Tags), die zeigen, welcher Teil Überschrift, Absatz, Liste oder Bild ist.
+      - "Language" bedeutet: es ist eine Sprache, die der Computer versteht, um Dokumente zu strukturieren.
+
+      In HTML kommt alles in spitze Klammern, z. B. &lt;h1&gt;, &lt;p&gt; oder &lt;img&gt;. Jede Webseite beginnt normalerweise mit &lt;html&gt;, &lt;head&gt; und &lt;body&gt;.
+      Im nächsten Schritt probierst du selbst: Schreibe sofort eine Überschrift und Absätze, damit du sehend lernst.`, 
+      check: ()=>({ok:true, message:'Gute Basis – weiter mit der Praxis!'}),
     },
     {
       id: '2',
