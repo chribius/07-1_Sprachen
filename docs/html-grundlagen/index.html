@@ -3,49 +3,41 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Relativer base href: funktioniert lokal und wenn die App in docs/html-grundlagen/ liegt -->
-  <base href="./">
-    <title>HTML Grundlagen - Sandbox</title>
+    <base href="./">
+    <title>HTML-Grundlagen - Abenteuerkurs</title>
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <header>
-      <h1>HTML - Grundlagen (Sandbox)</h1>
-      <nav>
-        <a href="#/editor">Editor</a> | <a href="#/hilfe">Hilfe</a>
+    <header class="main-header">
+      <div class="title-wrap">
+        <h1>HTML-Abenteuer: Expedition zur Code-Insel</h1>
+        <p>Moderne Lernreise für die 7. Klasse: lernen, bauen, direkt sehen.</p>
+      </div>
+      <nav class="topnav" aria-label="Sektionen">
+        <a href="#/start">Start</a>
+        <a href="#/abenteuer">Abenteuerweg</a>
+        <a href="#/editor">Editor</a>
+        <a href="#/hilfe">Hilfe</a>
       </nav>
     </header>
 
-    <main id="app"></main>
-
-    <template id="editor-tpl">
-      <section class="pane">
-        <h2>Schreibe HTML</h2>
-        <div class="cols">
-          <textarea id="editor" aria-label="HTML Editor">&lt;h2&gt;Hallo Welt&lt;/h2&gt;
-&lt;p&gt;Das ist ein kleiner HTML-Code zum Ausprobieren.&lt;/p&gt;</textarea>
-          <div class="preview">
-            <h3>Vorschau</h3>
-            <iframe id="preview" sandbox="allow-same-origin"></iframe>
-          </div>
-        </div>
-        <div class="controls">
-          <button id="run">Vorschau aktualisieren</button>
-          <button id="reset">Zurücksetzen</button>
-        </div>
-      </section>
-    </template>
-
-    <template id="hilfe-tpl">
-      <section class="pane">
-        <h2>Kurze Hilfe</h2>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Lernmodule">
+        <h2>Lernstationen</h2>
         <ul>
-          <li>HTML-Elemente stehen in spitzen Klammern, z. B. &lt;p&gt;Text&lt;/p&gt;.</li>
-          <li>Probiere Überschriften (&lt;h1&gt;..&lt;h6&gt;), Absätze (&lt;p&gt;) und Listen (&lt;ul&gt;).</li>
-          <li>Die Vorschau zeigt dein Ergebnis sofort an (bei Klick auf "Vorschau aktualisieren").</li>
+          <li><a href="#/modul/1">1. Was ist HTML?</a></li>
+          <li><a href="#/modul/2">2. Überschriften & Absätze</a></li>
+          <li><a href="#/modul/3">3. Un/Geordnete Listen</a></li>
+          <li><a href="#/modul/4">4. Links</a></li>
+          <li><a href="#/modul/5">5. Bilder & Besonderheiten</a></li>
+          <li><a href="#/modul/6">6. Texteffekte (Formatierung)</a></li>
+          <li><a href="#/modul/abschluss">Abschluss</a></li>
         </ul>
-      </section>
-    </template>
+        <div id="progress"></div>
+      </aside>
+
+      <main id="app" class="content"></main>
+    </div>
 
     <script src="js/app.js" defer></script>
   </body>
