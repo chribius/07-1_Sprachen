@@ -87,7 +87,15 @@
       id: '2',
       title: '2. Überschriften & Absätze',
       kind: 'editor',
-      task: `Tag <code class="inline-code">&lt;h1&gt;</code>: große Überschrift (einmal).<br>Tag <code class="inline-code">&lt;p&gt;</code>: Absatz (mindestens zwei).<br>Jedes Element braucht ein schließendes Tag, z. B. <code class="inline-code">&lt;/h1&gt;</code> und <code class="inline-code">&lt;/p&gt;</code>.<br><strong>Deine Aufgabe:</strong> Erstelle eine Seite mit einer Überschrift und zwei Absätzen.`,
+      task: `Überschriften und Absätze sind zwei der wichtigsten Strukturlemente in jedem Text - nicht nur in einem HTML-Dokument. Damit werden Texte übersichtlicher und besser lesbar. Du lernst hier, wie du sie in HTML anlegst.
+      <br>
+      Es gibt 6 Stufen von Überschriften, von <code class="inline-code">&lt;h1&gt;</code> (größte) bis <code class="inline-code">&lt;h6&gt;</code> (kleinste). Sie sollten hierarchisch genutzt werden, z. B. <code class="inline-code">&lt;h1&gt;</code> für den Haupttitel, <code class="inline-code">&lt;h2&gt;</code> für Untertitel, etc. Das <code class="inline-code">h</code> steht für "heading" (Überschrift).
+      <br>
+      Absätze werden mit <code class="inline-code">&lt;p&gt;</code> angelegt. Sie sorgen für Abstand und Struktur im Text. Das <code class="inline-code">p</code> steht für "paragraph" (Absatz).
+      <br><br>
+      Strukturiere den folgenden Text mit Überschriften und Absätzen. Achte darauf, dass du die Tags richtig öffnest und schließt, damit die Struktur klar wird.
+      <br><br>
+      Tag <code class="inline-code">&lt;h1&gt;</code>: große Überschrift (einmal).<br>Tag <code class="inline-code">&lt;p&gt;</code>: Absatz (mindestens zwei).<br>Jedes Element braucht ein schließendes Tag, z. B. <code class="inline-code">&lt;/h1&gt;</code> und <code class="inline-code">&lt;/p&gt;</code>.<br><strong>Deine Aufgabe:</strong> Erstelle eine Seite mit einer Überschrift und zwei Absätzen.`,
       starter: 'Mein Insel-Abenteuer\n\nHeute erreiche ich eine geheimnisvolle Bucht und schreibe meine ersten Entdecker-Notizen.\n\nIm zweiten Absatz beschreibe ich, wie ich das Lager baue und was ich als nächstes untersuchen will.',
       validate(doc, source){
         const hasH1 = doc.querySelectorAll('h1').length > 0
@@ -105,26 +113,44 @@
       id: '3',
       title: '3. Ungeordnete & geordnete Listen',
       kind: 'editor',
-      task: 'Erstelle eine <ul> mit 3 Dingen, die du auf der Insel findest, und eine <ol> mit 3 Abenteuerschritten.',
-      starter: '<h2>Meine Fundstücke</h2>\n<ul>\n  <li>Mysteriöse Karte</li>\n  <li>Alte Feder</li>\n  <li>Kartenschnitzerei</li>\n</ul>\n<h2>Mein Plan</h2>\n<ol>\n  <li>Baue ein Lager</li>\n  <li>Suche den Schatz</li>\n  <li>Erzähle deine Abenteuer</li>\n</ol>',
-      validate(doc){
-        const hasUl = doc.querySelectorAll('ul li').length >= 3
-        const hasOl = doc.querySelectorAll('ol li').length >= 3
-        if(!hasUl) return {ok:false, message:'Ergänze mindestens 3 Elemente in einer <ul> Liste.'}
-        if(!hasOl) return {ok:false, message:'Ergänze mindestens 3 Elemente in einer <ol> Liste.'}
-        return {ok:true, message:'Perfekt! Listen zeigen Struktur.'}
+      task: `Abenteuer-Modus: Du bist Schatzsucher und sortierst deine Entdeckungen. <br>
+        Schreibe: <code class="inline-code">&lt;ul&gt;...&lt;/ul&gt;</code> für Dinge, die einfach gesammelt werden (z. B. Glitzersteine). <br>
+        Schreibe: <code class="inline-code">&lt;ol&gt;...&lt;/ol&gt;</code> für Schritte, die nacheinander passieren müssen (z. B. Plan für den Schatzfund). <br>
+        Jeder Punkt gehört in <code class="inline-code">&lt;li&gt;...&lt;/li&gt;</code>. <br>
+        Wichtig: <code class="inline-code">&lt;li&gt;</code> bleibt immer in <code class="inline-code">&lt;ul&gt;</code> oder <code class="inline-code">&lt;ol&gt;</code>. <br><strong>Deine Aufgabe:</strong> Baue eine <code class="inline-code">&lt;ul&gt;</code> für 3 Fundstücke und eine <code class="inline-code">&lt;ol&gt;</code> für 3 Abenteuerschritte.`,
+
+      starter: 'Meine Fundstücke:\nKarte\nKompass\nNotizbuch\n\nMein Plan:\nLager errichten\nSchatz suchen\nRückweg planen',
+      validate(doc, source){
+        const ulCount = doc.querySelectorAll('ul').length
+        const olCount = doc.querySelectorAll('ol').length
+        const liInUl = doc.querySelectorAll('ul li').length
+        const liInOl = doc.querySelectorAll('ol li').length
+        if(ulCount < 1) return {ok:false, message:'Füge mindestens eine &lt;ul&gt;-Liste ein.'}
+        if(olCount < 1) return {ok:false, message:'Füge mindestens eine &lt;ol&gt;-Liste ein.'}
+        if(liInUl < 3) return {ok:false, message:'Füge mindestens 3 &lt;li&gt;-Elemente zur &lt;ul&gt; hinzu.'}
+        if(liInOl < 3) return {ok:false, message:'Füge mindestens 3 &lt;li&gt;-Elemente zur &lt;ol&gt; hinzu.'}
+
+        const nesting = checkTagNesting(source, ['ul','ol','li'])
+        if(!nesting.ok) return nesting
+
+        return {ok:true, message:'Perfekt! Listenstruktur und Elemente stimmen.'}
       }
     },
     {
       id: '4',
       title: '4. Links setzen',
       kind: 'editor',
-      task: 'Schreibe einen Link, der zum Beispiel auf https://www.inf-schule.de zeigt. Text: "Mehr erfahren".',
-      starter: '<p>Weiter geht`s: <a href="https://www.inf-schule.de" target="_blank">Mehr erfahren</a></p>',
+      task: `Klick-Modus: Du baust Wegweiser für deine Leser. <br>
+        Mit <code class="inline-code">&lt;a href="URL"&gt;Text&lt;/a&gt;</code> zeigst du, wohin der Weg führt. <br>
+        Mit <code class="inline-code">target="_blank"</code> öffnest du den Weg in einem neuen Tab, damit die Startseite offen bleibt. <br>
+        <strong>Deine Aufgabe:</strong> Erstelle einen Link auf <code class="inline-code">https://www.inf-schule.de</code> mit Text "Mehr erfahren".`,
+
+      starter: 'Geh zum Beispiel auf inf-schule.de und entdecke HTML!',
       validate(doc){
         const a = doc.querySelector('a[href]')
-        if(!a) return {ok:false, message:'Es fehlt ein <a href="..."> Link.'}
+        if(!a) return {ok:false, message:'Es fehlt ein &lt;a href="..."&gt;-Link.'}
         if(!a.textContent.trim()) return {ok:false, message:'Der Link braucht sichtbaren Text (z.B. "Mehr erfahren").'}
+        if(!a.getAttribute('href') || !a.getAttribute('href').startsWith('https://')) return {ok:false, message:'Der Link muss mit https:// beginnen.'}
         return {ok:true, message:'Link erstellt – Navigation funktioniert.'}
       }
     },
@@ -132,13 +158,18 @@
       id: '5',
       title: '5. Bilder einbinden',
       kind: 'editor',
-      task: 'Füge ein Bild ein: <img src="..." alt="...">. Probiere z.B. https://via.placeholder.com/250.',
-      starter: '<p>Hier ist unsere Schatzkarte:</p>\n<img src="https://via.placeholder.com/250" alt="Schatzkarte" />',
+      task: `Bild-Reporter: Ein Bild macht deine Seite lebendig. <br>
+        Schreibe: <code class="inline-code">&lt;img src="URL" alt="Beschreibung" /&gt;</code>. <br>
+        Achte auf src (Bilddatei) und alt (Erklärung, falls das Bild nicht angezeigt wird oder für Vorleseprogramme). <br>
+        Tipp: Ohne alt wissen manche Menschen nicht, was das Bild zeigt. <br><strong>Deine Aufgabe:</strong> Binde ein Bild mit einer guten Beschreibung ein.`,
+
+
+      starter: 'Schatzkarte einbinden:\n- Bild-URL: https://via.placeholder.com/250\n- alt-Text: Schatzkarte',
       validate(doc){
         const img = doc.querySelector('img')
-        if(!img) return {ok:false, message:'Füge mindestens ein <img> Element hinzu.'}
-        if(!img.getAttribute('src')) return {ok:false, message:'Das img-Tag braucht ein src-Attribut.'}
-        if(!img.getAttribute('alt')) return {ok:false, message:'Das img-Tag braucht ein alt-Attribut für Barrierefreiheit.'}
+        if(!img) return {ok:false, message:'Füge mindestens ein &lt;img&gt;-Element hinzu.'}
+        if(!img.getAttribute('src')) return {ok:false, message:'Das &lt;img&gt;-Tag braucht ein src-Attribut.'}
+        if(!img.getAttribute('alt') || !img.getAttribute('alt').trim()) return {ok:false, message:'Das &lt;img&gt;-Tag braucht ein alt-Attribut für Barrierefreiheit.'}
         return {ok:true, message:'Bild eingebunden: großartig!'}
       }
     },
@@ -146,13 +177,19 @@
       id: '6',
       title: '6. Text formatieren',
       kind: 'editor',
-      task: 'Verwende <strong>, <em> und <small>, um einen Satz lebendiger zu machen.',
-      starter: '<p>Der <strong>mutige Entdecker</strong> fand <em>eine seltene Karte</em> im <small>verstaubten</small> Buch.</p>',
+      task: `Autor-Update: Mit Formatierung leitest du die Aufmerksamkeit der Leser. <br>
+        <code class="inline-code">&lt;strong&gt;</code> ist fett und zeigt, dass etwas wichtig ist. <br>
+        <code class="inline-code">&lt;em&gt;</code> ist kursiv und zeigt Betonung. <br>
+        <code class="inline-code">&lt;small&gt;</code> ist kleiner und passt gut für Anmerkungen. <br>
+        <strong>Deine Aufgabe:</strong> Schreibe einen Satz mit allen drei Formatierungen, zum Beispiel: <em>"Der starke Held (strong) geht mutig voran, dann sagt er <strong>warte</strong> und denkt daran, dass <small>die Karte wichtig</small> ist"</em>.`,
+
+
+      starter: 'Der mutige Entdecker fand eine seltene Karte im verstaubten Buch.',
       validate(doc){
         const strong = doc.querySelector('strong')
         const em = doc.querySelector('em')
         const small = doc.querySelector('small')
-        if(!strong || !em || !small) return {ok:false, message:'Nutze <strong>, <em> und <small> mindestens einmal.'}
+        if(!strong || !em || !small) return {ok:false, message:'Nutze &lt;strong&gt;, &lt;em&gt; und &lt;small&gt; mindestens einmal.'}
         return {ok:true, message:'Du beherrschst Textauszeichnung prima!'}
       }
     },
