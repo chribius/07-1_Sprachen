@@ -17,7 +17,14 @@ body {
   font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
   background: radial-gradient(circle at top, #1e293b, #0a1122 60%);
   color: var(--text);
+  font-size: 18px;
 }
+
+h1,h2,h3,h4,h5,h6 {
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.01em;
+}
+
 .main-header {
   padding: 1rem 1.2rem;
   border-bottom: 1px solid var(--border);
@@ -124,9 +131,31 @@ body {
 .sidebar p,
 .sidebar ul,
 .sidebar li {
-  font-size: 1.35rem;
-  line-height: 1.7;
+  font-size: 1.5rem;
+  line-height: 1.8;
 }
+
+.code,
+.inline-code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 1.05em;
+  color: #a5f3fc;
+  background: rgba(56, 189, 248, 0.18);
+  padding: 0.14rem 0.25rem;
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+
+.important {
+  color: #fef08a;
+  font-weight: 700;
+}
+
+.punch {
+  color: #22c55e;
+  font-weight: 700;
+}
+
 .cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
