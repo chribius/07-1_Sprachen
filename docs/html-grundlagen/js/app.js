@@ -199,10 +199,18 @@
     root.appendChild(pane)
     updateProgress(mod.id)
 
+    function makePreviewDoc(code) {
+      const trimmed = code.trim()
+      if (/^\s*<!doctype|^\s*<html/i.test(trimmed)) {
+        return code
+      }
+      return `<!doctype html><html><head><meta charset="utf-8"><style>body{margin:1.3rem;background:#0f172a;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;line-height:1.75;font-size:1.35rem;}h1,h2,h3,h4{color:#f1f5f9;}a{color:#22d3ee;}p{margin:0.75rem 0;}.vframe{max-width:100%;}img{max-width:100%;height:auto;border:1px solid #334155;border-radius:6px;}</style></head><body class="vframe">${code}</body></html>`
+    }
+
     function renderPreview(){
       const code = codeInput.value
       const parse = parseHtml(code)
-      preview.srcdoc = code
+      preview.srcdoc = makePreviewDoc(code)
       if(parse.parserError) {
         codeInput.style.borderColor = 'var(--danger)'
         tooltip.innerHTML = `Syntaxfehler erkannt: <strong>Prüfe geschlossene Tags</strong>, dann nochmal prüfen. <span class=\"tooltip\">Details<span>${parse.parserErrorMessage}</span></span>`
