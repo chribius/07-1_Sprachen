@@ -43,13 +43,13 @@
       id: '1',
       title: '1. Was ist HTML?',
       kind: 'info',
-      text: `HTML steht für "HyperText Markup Language". Damit beschreiben Menschen dem Browser, wie eine Webseite aufgebaut ist.
-      - "HyperText" bedeutet: Text, der mit Links verbunden ist.
-      - "Markup" bedeutet: Kennzeichnungen (Tags), die zeigen, welcher Teil Überschrift, Absatz, Liste oder Bild ist.
-      - "Language" bedeutet: es ist eine Sprache, die der Computer versteht, um Dokumente zu strukturieren.
+      text: `<span class="important">HTML steht für "HyperText Markup Language"</span>. Damit beschreiben Menschen dem Browser, wie eine Webseite aufgebaut ist.<br>
+      <span class="punch">HyperText</span> bedeutet: Text, der mit Links verbunden ist.<br>
+      <span class="punch">Markup</span> bedeutet: Kennzeichnungen (<code class="inline-code">Tags</code>), die zeigen, welcher Teil Überschrift, Absatz, Liste oder Bild ist.<br>
+      <span class="punch">Language</span> bedeutet: es ist eine Sprache, die der Computer versteht, um Dokumente zu strukturieren.<br><br>
 
-      In HTML kommt alles in spitze Klammern, z. B. &lt;h1&gt;, &lt;p&gt; oder &lt;img&gt;. Jede Webseite beginnt normalerweise mit &lt;html&gt;, &lt;head&gt; und &lt;body&gt;.
-      Im nächsten Schritt probierst du selbst: Schreibe sofort eine Überschrift und Absätze, damit du sehend lernst.`, 
+      In HTML kommt alles in spitze Klammern, z. B. <code class="inline-code">&lt;h1&gt;</code>, <code class="inline-code">&lt;p&gt;</code> oder <code class="inline-code">&lt;img&gt;</code>. Jede Webseite beginnt normalerweise mit <code class="inline-code">&lt;html&gt;</code>, <code class="inline-code">&lt;head&gt;</code> und <code class="inline-code">&lt;body&gt;</code>.<br>
+      <span class="important">Jetzt kommt der praktische Teil:</span> Im nächsten Schritt probierst du selbst: Schreibe eine Überschrift und zwei Absätze im Editor, damit du die Wirkung direkt siehst.`, 
       check: ()=>({ok:true, message:'Gute Basis – weiter mit der Praxis!'}),
     },
     {
