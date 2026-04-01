@@ -226,7 +226,8 @@ iframe#preview {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 8px;
-  min-height: 240px;
+  min-height: 560px !important;
+  height: min(80vh, 860px) !important;
 }
 .tooltip {
   display: inline-block;
