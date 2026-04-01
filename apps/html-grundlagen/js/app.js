@@ -117,7 +117,9 @@
       title: '3. Ungeordnete & geordnete Listen',
       kind: 'editor',
       task: `Abenteuer-Modus: Du bist Schatzsucher und sortierst deine Entdeckungen. <br>
-        <span class="important">Tipp:</span> Jede HTML-Struktur hat ein Öffnen und Schließen, z. B. <code class="inline-code">&lt;ul&gt;...&lt;/ul&gt;</code>. <br>
+        <span class="important">Das Tag <code class="inline-code">&lt;ul&gt;</code> steht für unordered list (ungeordnete Liste).</span><br>
+        <span class="important">Das Tag <code class="inline-code">&lt;ol&gt;</code> steht für ordered list (geordnete, nummerierte Liste).</span><br>
+        <span class="important">Das Tag <code class="inline-code">&lt;li&gt;</code> steht für list item (ein Listeneintrag).</span><br>
         Schreibe: <code class="inline-code">&lt;ul&gt;...&lt;/ul&gt;</code> für Dinge, die du einfach sammelst (z. B. Glitzersteine). <br>
         Schreibe: <code class="inline-code">&lt;ol&gt;...&lt;/ol&gt;</code> für Abfolgen (z. B. Schritte zum Schatz). <br>
         Jeder Listeneintrag gehört in <code class="inline-code">&lt;li&gt;...&lt;/li&gt;</code>. <br>
@@ -147,13 +149,14 @@
       title: '4. Links setzen',
       kind: 'editor',
       task: `Klick-Modus: Du baust Wegweiser für deine Leser. <br>
-        <span class="important">Tipp:</span> HTML-Link-Tag hat das Format <code class="inline-code">&lt;a href="URL"&gt;Linktext&lt;/a&gt;</code> (Öffnen + Text + Schließen). <br>
-        <code class="inline-code">href</code> nennt die Zieladresse, <code class="inline-code">target="_blank"</code> öffnet in neuem Tab. <br>
-        <span class="punch">Merke:</span> Kleiner Linktext kann groß wirken, wenn er klar ist (z.B. "Mehr erfahren"). <br>
-        <strong>Deine Aufgabe:</strong> Erstelle einen Link auf <code class="inline-code">https://www.inf-schule.de</code> mit Text "Mehr erfahren".`,
+        <span class="important">Das Tag <code class="inline-code">&lt;a&gt;</code> steht für anchor (Anker), es verbindet Seiten.</span><br>
+        <span class="important">Das Attribut <code class="inline-code">href</code> steht für hyperlink reference (Zieladresse).</span><br>
+        <span class="important">target="_blank" bedeutet: öffne die Seite in einem neuen Browser-Tab.</span><br>
+        <span class="important">Jedes Link-Element hat Öffnen + Text + Schließen, z.B. <code class="inline-code">&lt;a href="url"&gt;Text&lt;/a&gt;</code>.</span><br>
+        <span class="punch">Merke:</span> Kurze Linktexte wirken professionell, wenn der Inhalt klar ist (z.B. "Mehr erfahren", "Zum Kapitel"). <br>
+        <strong>Deine Aufgabe:</strong> Erstelle einen Link auf <code class="inline-code">https://www.inf-schule.de</code> mit Text "mehr erfahren".`,
 
-
-      starter: 'Geh zum Beispiel auf inf-schule.de und entdecke HTML!',
+      starter: 'Auf inf-schule.de kannst du über HTML mehr erfahren.',
       validate(doc){
         const a = doc.querySelector('a[href]')
         if(!a) return {ok:false, message:'Es fehlt ein &lt;a href="..."&gt;-Link.'}
@@ -167,14 +170,16 @@
       title: '5. Bilder einbinden',
       kind: 'editor',
       task: `Bild-Reporter: Ein Bild macht deine Seite lebendig. <br>
-        <span class="important">Tipp:</span> Das richtige Bild-Tag ist <code class="inline-code">&lt;img src="URL" alt="Beschreibung" /&gt;</code> (kein schließendes Tag). <br>
-        <code class="inline-code">src</code> zeigt auf die Bilddatei, <code class="inline-code">alt</code> beschreibt den Inhalt für Leser:innen, die das Bild nicht sehen können. <br>
-        <span class="punch">Merke:</span> Immer <code class="inline-code">alt</code> verwenden (Wichtigkeit für Barrierefreiheit). <br>
+        <span class="important">Das Tag <code class="inline-code">&lt;img&gt;</code> steht für image (Bild).</span><br>
+        <span class="important">src steht für source (Quelle) der Bilddatei.</span><br>
+        <span class="important">alt steht für alternative Text (Ersatzbeschreibung bei fehlendem Bild).</span><br>
+        <span class="important">So lautet die Struktur: <code class="inline-code">&lt;img src="URL" alt="Beschreibung" /&gt;</code>.</span><br>
         <strong>Deine Aufgabe:</strong> Binde ein Bild mit einer klaren und nützlichen Beschreibung ein.`,
 
 
 
-      starter: 'Schatzkarte einbinden:\n- Bild-URL: https://via.placeholder.com/250\n- alt-Text: Schatzkarte',
+
+      starter: 'Schatzkarte einbinden:\n- Bild-URL: https://i.sstatic.net/bYvO3.jpg\n- alt-Text: Schatzkarte',
       validate(doc){
         const img = doc.querySelector('img')
         if(!img) return {ok:false, message:'Füge mindestens ein &lt;img&gt;-Element hinzu.'}
@@ -188,10 +193,13 @@
       title: '6. Text formatieren',
       kind: 'editor',
       task: `Autor-Update: Mit Formatierung lenkst du die Aufmerksamkeit. <br>
-        So sieht ein korrektes Tag-Paar aus: <code class="inline-code">&lt;strong&gt;Stark&lt;/strong&gt;</code>. <br>
-        <span class="important">&lt;strong&gt;</span> markiert wichtige Wörter, <span class="important">&lt;em&gt;</span> betont und <span class="important">&lt;small&gt;</span> fügt kleinen Zusatztext hinzu. <br>
-        <span class="punch">Tipp:</span> Nutze <code class="inline-code">&lt;small&gt;</code> für Fußnoten und Hinweise, nicht für wichtige Hauptpunkte. <br>
-        <strong>Deine Aufgabe:</strong> Formatiere diesen Satz mit allen drei Tags, z. B. <em>"Der <strong>mutige</strong> Entdecker findet <em>geheime</em> Hinweise und schreibt sie in ein <small>Notizbuch</small>"</em>.`,
+        <span class="important">Das Tag <code class="inline-code">&lt;strong&gt;</code> heißt strong (stark) und markiert wichtige Wörter.</span><br>
+        <span class="important">Das Tag <code class="inline-code">&lt;em&gt;</code> heißt emphasis (Betonung) und hebt etwas hervor.</span><br>
+        <span class="important">Das Tag <code class="inline-code">&lt;small&gt;</code> zeigt Hinweise oder einen kleineren Text.</span><br>
+        <span class="punch">Jedes Formatierungs-Tag funktioniert als Paar: öffnen + Text + schließen.</span><br>
+        Beispiel: <code class="inline-code">&lt;strong&gt;Top&lt;/strong&gt;</code>, <code class="inline-code">&lt;em&gt;wichtig&lt;/em&gt;</code>, <code class="inline-code">&lt;small&gt;Anmerkung&lt;/small&gt;</code>. <br>
+        <strong>Deine Aufgabe:</strong> Formatiere diesen Satz mit allen drei Tags, z. B. <em>"Der mutige Held ist <strong>wichtig</strong>, <em>gespannt</em> und fügt eine <small>Anmerkung</small> hinzu."</em>.`,
+
 
 
 
@@ -223,11 +231,69 @@
     return modules.find(m=>m.id===hash) || modules[0]
   }
 
-  function updateProgress(currentId) {
-    const idx = modules.findIndex(m => m.id === currentId)
-    const done = modules.slice(0, Math.max(0, idx+1)).filter(m=>m.kind==='editor').length
+  const COMPLETED_KEY = 'html-grundlagen-completed'
+
+  function loadCompletedStations() {
+    try {
+      const data = JSON.parse(localStorage.getItem(COMPLETED_KEY) || '[]')
+      return new Set(Array.isArray(data) ? data : [])
+    } catch {
+      return new Set()
+    }
+  }
+
+  function saveCompletedStations() {
+    localStorage.setItem(COMPLETED_KEY, JSON.stringify([...completedStations]))
+  }
+
+  const completedStations = loadCompletedStations()
+
+  function updateProgress() {
+    const done = completedStations.size
     const total = modules.filter(m=>m.kind==='editor').length
     progressEl.textContent = `Fertig: ${done}/${total} Praxisstationen`;
+  }
+
+  function setActiveNavLink() {
+    const rawHash = location.hash || '#/start'
+    const currentHash = rawHash.startsWith('#/modul/') ? '#/editor' : rawHash
+    document.querySelectorAll('.topnav a').forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === currentHash)
+    })
+  }
+
+  const STORAGE_KEY = 'html-grundlagen-module-state'
+
+  function loadEditorState() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    } catch {
+      return {}
+    }
+  }
+
+  function saveEditorState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  }
+
+  function setActiveSidebarLink() {
+    const rawHash = location.hash || '#/start'
+    const sidebarHash = rawHash.startsWith('#/modul/') ? rawHash : rawHash
+    document.querySelectorAll('.sidebar a').forEach(link => {
+      const href = link.getAttribute('href')
+      const active = href === sidebarHash || (href === '#/editor' && rawHash.startsWith('#/modul/'))
+      link.classList.toggle('active', active)
+
+      const moduleId = href.replace('#/modul/', '')
+      if (href.startsWith('#/modul/') && completedStations.has(moduleId)) {
+        link.classList.add('completed')
+      } else {
+        link.classList.remove('completed')
+      }
+      if (href === '#/editor' && rawHash.startsWith('#/modul/') && completedStations.has(moduleId)) {
+        link.classList.add('completed')
+      }
+    })
   }
 
   function showStatus(place, status, text) {
@@ -252,7 +318,7 @@
       const p = document.createElement('p'); p.innerHTML = mod.text
       pane.appendChild(p)
       root.appendChild(pane)
-      updateProgress(mod.id)
+      updateProgress()
       return
     }
 
@@ -263,7 +329,8 @@
     const left = document.createElement('div'); left.className='box'
     const codeInput = document.createElement('textarea');
     codeInput.id='editor'
-    codeInput.value = mod.starter
+    const editorState = loadEditorState()
+    codeInput.value = editorState[mod.id] != null ? editorState[mod.id] : mod.starter
     left.appendChild(codeInput)
 
     const controls = document.createElement('div')
@@ -285,7 +352,7 @@
     pane.appendChild(tooltip)
 
     root.appendChild(pane)
-    updateProgress(mod.id)
+    updateProgress()
 
     function makePreviewDoc(code) {
       const trimmed = code.trim()
@@ -312,11 +379,19 @@
     let timer
     codeInput.addEventListener('input', ()=>{
       clearTimeout(timer)
-      timer = setTimeout(renderPreview, 250)
+      timer = setTimeout(()=>{
+        renderPreview()
+        const state = loadEditorState()
+        state[mod.id] = codeInput.value
+        saveEditorState(state)
+      }, 250)
     })
 
     resetBtn.addEventListener('click', ()=>{
       codeInput.value = mod.starter
+      const state = loadEditorState()
+      state[mod.id] = mod.starter
+      saveEditorState(state)
       renderPreview()
       feedback.innerHTML = ''
     })
@@ -331,6 +406,12 @@
       const result = mod.validate(parse.doc, code)
       if(result.ok){
         showStatus(feedback, true, `${result.message} 🎉`)
+        if(mod.kind === 'editor') {
+          completedStations.add(mod.id)
+          saveCompletedStations()
+          updateProgress()
+          setActiveSidebarLink()
+        }
       } else {
         showStatus(feedback, false, result.message)
       }
@@ -342,8 +423,14 @@
   function router(){
     const mod = getModuleByHash()
     renderModule(mod)
+    setActiveNavLink()
+    setActiveSidebarLink()
   }
 
   window.addEventListener('hashchange', router)
+  document.addEventListener('click', () => {
+    setActiveNavLink()
+    setActiveSidebarLink()
+  })
   router()
 })()
