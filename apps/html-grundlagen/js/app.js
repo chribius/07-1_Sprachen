@@ -2,6 +2,37 @@
   const root = document.getElementById('app')
   const progressEl = document.getElementById('progress')
 
+  function checkTagNesting(source, tags){
+    const tokenRe = /<\/?([a-z0-9]+)(\s[^>]*)?>/gi
+    const selfClosing = new Set(['img','br','hr','meta','link','input'])
+    const stack = []
+    let match
+    while((match = tokenRe.exec(source)) !== null){
+      const raw = match[0]
+      const tag = match[1].toLowerCase()
+      const isClose = raw.startsWith('</')
+      if(!tags.includes(tag)) continue
+      if(!isClose){
+        if(!selfClosing.has(tag)) stack.push(tag)
+      } else {
+        if(stack.length === 0) {
+          return {ok:false, message:`Überflüssiges &lt;/${tag}&gt; gefunden.`}
+        }
+        const top = stack[stack.length-1]
+        if(top === tag){
+          stack.pop()
+        } else {
+          return {ok:false, message:`Schachtelungsfehler: Erwarte &lt;/${top}&gt; bevor &lt;/${tag}&gt;.`}
+        }
+      }
+    }
+    if(stack.length>0){
+      const openTag = stack.pop()
+      return {ok:false, message:`Es fehlt das schließende &lt;/${openTag}&gt; für ein geöffnetes &lt;${openTag}&gt;.`}
+    }
+    return {ok:true}
+  }
+
   const modules = [
     {
       id: 'start',
@@ -56,13 +87,17 @@
       id: '2',
       title: '2. Überschriften & Absätze',
       kind: 'editor',
-      task: 'Schreibe eine <h1>-Überschrift und zwei <p>-Absätze. Vergiss nicht die schließenden Tags.',
-      starter: '<h1>Abenteuer auf der Insel</h1>\n<p>Ich erreiche ein geheimnisvolles Lager.</p>\n<p>Hier lerne ich erste HTML-Fundamente.</p>',
-      validate(doc){
+      task: `Tag <code class="inline-code">&lt;h1&gt;</code>: große Überschrift (einmal).<br>Tag <code class="inline-code">&lt;p&gt;</code>: Absatz (mindestens zwei).<br>Jedes Element braucht ein schließendes Tag, z. B. <code class="inline-code">&lt;/h1&gt;</code> und <code class="inline-code">&lt;/p&gt;</code>.<br><strong>Deine Aufgabe:</strong> Erstelle eine Seite mit einer Überschrift und zwei Absätzen.`,
+      starter: 'Mein Insel-Abenteuer\n\nHeute erreiche ich eine geheimnisvolle Bucht und schreibe meine ersten Entdecker-Notizen.\n\nIm zweiten Absatz beschreibe ich, wie ich das Lager baue und was ich als nächstes untersuchen will.',
+      validate(doc, source){
         const hasH1 = doc.querySelectorAll('h1').length > 0
         const hasP = doc.querySelectorAll('p').length >= 2
-        if(!hasH1) return {ok:false, message:'Füge mindestens eine <h1> Überschrift hinzu.'}
-        if(!hasP) return {ok:false, message:'Füge mindestens zwei Absätze <p> ein.'}
+        if(!hasH1) return {ok:false, message:'Füge mindestens eine &lt;h1&gt;-Überschrift hinzu.'}
+        if(!hasP) return {ok:false, message:'Füge mindestens zwei &lt;p&gt;-Absätze ein.'}
+
+        const nesting = checkTagNesting(source, ['h1','p'])
+        if(!nesting.ok) return nesting
+
         return {ok:true, message:'Super! Überschrift und Absätze sitzen.'}
       }
     },
@@ -173,7 +208,7 @@
       return
     }
 
-    const desc = document.createElement('p'); desc.textContent = mod.task
+    const desc = document.createElement('p'); desc.innerHTML = mod.task
     pane.appendChild(desc)
 
     const cols = document.createElement('div'); cols.className='cols'
@@ -245,7 +280,7 @@
         showStatus(feedback, false, 'HTML-Syntax fehlerhaft: '+parse.parserErrorMessage.replace(/\s+/g,' ').slice(0,120))
         return
       }
-      const result = mod.validate(parse.doc)
+      const result = mod.validate(parse.doc, code)
       if(result.ok){
         showStatus(feedback, true, `${result.message} 🎉`)
       } else {
