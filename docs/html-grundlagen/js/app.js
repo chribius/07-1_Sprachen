@@ -87,15 +87,18 @@
       id: '2',
       title: '2. Überschriften & Absätze',
       kind: 'editor',
-      task: `Überschriften und Absätze sind zwei der wichtigsten Strukturlemente in jedem Text - nicht nur in einem HTML-Dokument. Damit werden Texte übersichtlicher und besser lesbar. Du lernst hier, wie du sie in HTML anlegst.
+      task: `<span class="important">Überschriften und Absätze sind zwei der wichtigsten Strukturlemente.</span><br>
+      Denn sie machen Text lesbar und helfen, Inhalte zu finden. <br>
+      <span class="punch">Es gibt 6 Stufen von Überschriften</span>, von <code class="inline-code">&lt;h1&gt;</code> (größte) bis <code class="inline-code">&lt;h6&gt;</code> (kleinste).<br>
+      <strong>Haupttitel</strong> gehört in <code class="inline-code">&lt;h1&gt;</code>, <strong>Untertitel</strong> in <code class="inline-code">&lt;h2&gt;</code>.<br>
+      Das <code class="inline-code">h</code> steht übrigens für <code class="inline-code">heading</code>.<br>
       <br>
-      Es gibt 6 Stufen von Überschriften, von <code class="inline-code">&lt;h1&gt;</code> (größte) bis <code class="inline-code">&lt;h6&gt;</code> (kleinste). Sie sollten hierarchisch genutzt werden, z. B. <code class="inline-code">&lt;h1&gt;</code> für den Haupttitel, <code class="inline-code">&lt;h2&gt;</code> für Untertitel, etc. Das <code class="inline-code">h</code> steht für "heading" (Überschrift).
+      Absätze machen dein Schreiben luftiger: <code class="inline-code">&lt;p&gt;</code> ... <code class="inline-code">&lt;/p&gt;</code>.<br>
+      <span class="important">Jedes HTML-Element hat einen offenen und einen schließenden Tag</span>, z. B.:<br>
+      <code class="inline-code">&lt;h1&gt;Titel&lt;/h1&gt;</code> und <code class="inline-code">&lt;p&gt;Text&lt;/p&gt;</code>.<br>
+      Das <code class="inline-code">p</code> steht für <code class="inline-code">paragraph</code>.<br>
       <br>
-      Absätze werden mit <code class="inline-code">&lt;p&gt;</code> angelegt. Sie sorgen für Abstand und Struktur im Text. Das <code class="inline-code">p</code> steht für "paragraph" (Absatz).
-      <br><br>
-      Strukturiere den folgenden Text mit Überschriften und Absätzen. Achte darauf, dass du die Tags richtig öffnest und schließt, damit die Struktur klar wird.
-      <br><br>
-      Tag <code class="inline-code">&lt;h1&gt;</code>: große Überschrift (einmal).<br>Tag <code class="inline-code">&lt;p&gt;</code>: Absatz (mindestens zwei).<br>Jedes Element braucht ein schließendes Tag, z. B. <code class="inline-code">&lt;/h1&gt;</code> und <code class="inline-code">&lt;/p&gt;</code>.<br><strong>Deine Aufgabe:</strong> Erstelle eine Seite mit einer Überschrift und zwei Absätzen.`,
+      <strong>Deine Aufgabe:</strong> Verwende <code class="inline-code">&lt;h1&gt;</code> für den Haupttitel und mindestens zwei <code class="inline-code">&lt;p&gt;</code>-Absätze im Text.`,
       starter: 'Mein Insel-Abenteuer\n\nHeute erreiche ich eine geheimnisvolle Bucht und schreibe meine ersten Entdecker-Notizen.\n\nIm zweiten Absatz beschreibe ich, wie ich das Lager baue und was ich als nächstes untersuchen will.',
       validate(doc, source){
         const hasH1 = doc.querySelectorAll('h1').length > 0
@@ -114,10 +117,13 @@
       title: '3. Ungeordnete & geordnete Listen',
       kind: 'editor',
       task: `Abenteuer-Modus: Du bist Schatzsucher und sortierst deine Entdeckungen. <br>
-        Schreibe: <code class="inline-code">&lt;ul&gt;...&lt;/ul&gt;</code> für Dinge, die einfach gesammelt werden (z. B. Glitzersteine). <br>
-        Schreibe: <code class="inline-code">&lt;ol&gt;...&lt;/ol&gt;</code> für Schritte, die nacheinander passieren müssen (z. B. Plan für den Schatzfund). <br>
-        Jeder Punkt gehört in <code class="inline-code">&lt;li&gt;...&lt;/li&gt;</code>. <br>
-        Wichtig: <code class="inline-code">&lt;li&gt;</code> bleibt immer in <code class="inline-code">&lt;ul&gt;</code> oder <code class="inline-code">&lt;ol&gt;</code>. <br><strong>Deine Aufgabe:</strong> Baue eine <code class="inline-code">&lt;ul&gt;</code> für 3 Fundstücke und eine <code class="inline-code">&lt;ol&gt;</code> für 3 Abenteuerschritte.`,
+        <span class="important">Tipp:</span> Jede HTML-Struktur hat ein Öffnen und Schließen, z. B. <code class="inline-code">&lt;ul&gt;...&lt;/ul&gt;</code>. <br>
+        Schreibe: <code class="inline-code">&lt;ul&gt;...&lt;/ul&gt;</code> für Dinge, die du einfach sammelst (z. B. Glitzersteine). <br>
+        Schreibe: <code class="inline-code">&lt;ol&gt;...&lt;/ol&gt;</code> für Abfolgen (z. B. Schritte zum Schatz). <br>
+        Jeder Listeneintrag gehört in <code class="inline-code">&lt;li&gt;...&lt;/li&gt;</code>. <br>
+        Wichtig: <code class="inline-code">&lt;li&gt;</code> darf nur in <code class="inline-code">&lt;ul&gt;</code> oder <code class="inline-code">&lt;ol&gt;</code> stehen. <br>
+        <span class="punch">Achte auf die richtige Tag-Paarung:</span> Öffnen + Inhalt + Schließen, z.B. <code class="inline-code">&lt;li&gt;Punkt&lt;/li&gt;</code>. <br><strong>Deine Aufgabe:</strong> Baue eine <code class="inline-code">&lt;ul&gt;</code> mit 3 Fundstücken und eine <code class="inline-code">&lt;ol&gt;</code> mit 3 Abenteuerschritten.`,
+
 
       starter: 'Meine Fundstücke:\nKarte\nKompass\nNotizbuch\n\nMein Plan:\nLager errichten\nSchatz suchen\nRückweg planen',
       validate(doc, source){
@@ -141,9 +147,11 @@
       title: '4. Links setzen',
       kind: 'editor',
       task: `Klick-Modus: Du baust Wegweiser für deine Leser. <br>
-        Mit <code class="inline-code">&lt;a href="URL"&gt;Text&lt;/a&gt;</code> zeigst du, wohin der Weg führt. <br>
-        Mit <code class="inline-code">target="_blank"</code> öffnest du den Weg in einem neuen Tab, damit die Startseite offen bleibt. <br>
+        <span class="important">Tipp:</span> HTML-Link-Tag hat das Format <code class="inline-code">&lt;a href="URL"&gt;Linktext&lt;/a&gt;</code> (Öffnen + Text + Schließen). <br>
+        <code class="inline-code">href</code> nennt die Zieladresse, <code class="inline-code">target="_blank"</code> öffnet in neuem Tab. <br>
+        <span class="punch">Merke:</span> Kleiner Linktext kann groß wirken, wenn er klar ist (z.B. "Mehr erfahren"). <br>
         <strong>Deine Aufgabe:</strong> Erstelle einen Link auf <code class="inline-code">https://www.inf-schule.de</code> mit Text "Mehr erfahren".`,
+
 
       starter: 'Geh zum Beispiel auf inf-schule.de und entdecke HTML!',
       validate(doc){
@@ -159,9 +167,11 @@
       title: '5. Bilder einbinden',
       kind: 'editor',
       task: `Bild-Reporter: Ein Bild macht deine Seite lebendig. <br>
-        Schreibe: <code class="inline-code">&lt;img src="URL" alt="Beschreibung" /&gt;</code>. <br>
-        Achte auf src (Bilddatei) und alt (Erklärung, falls das Bild nicht angezeigt wird oder für Vorleseprogramme). <br>
-        Tipp: Ohne alt wissen manche Menschen nicht, was das Bild zeigt. <br><strong>Deine Aufgabe:</strong> Binde ein Bild mit einer guten Beschreibung ein.`,
+        <span class="important">Tipp:</span> Das richtige Bild-Tag ist <code class="inline-code">&lt;img src="URL" alt="Beschreibung" /&gt;</code> (kein schließendes Tag). <br>
+        <code class="inline-code">src</code> zeigt auf die Bilddatei, <code class="inline-code">alt</code> beschreibt den Inhalt für Leser:innen, die das Bild nicht sehen können. <br>
+        <span class="punch">Merke:</span> Immer <code class="inline-code">alt</code> verwenden (Wichtigkeit für Barrierefreiheit). <br>
+        <strong>Deine Aufgabe:</strong> Binde ein Bild mit einer klaren und nützlichen Beschreibung ein.`,
+
 
 
       starter: 'Schatzkarte einbinden:\n- Bild-URL: https://via.placeholder.com/250\n- alt-Text: Schatzkarte',
@@ -177,11 +187,12 @@
       id: '6',
       title: '6. Text formatieren',
       kind: 'editor',
-      task: `Autor-Update: Mit Formatierung leitest du die Aufmerksamkeit der Leser. <br>
-        <code class="inline-code">&lt;strong&gt;</code> ist fett und zeigt, dass etwas wichtig ist. <br>
-        <code class="inline-code">&lt;em&gt;</code> ist kursiv und zeigt Betonung. <br>
-        <code class="inline-code">&lt;small&gt;</code> ist kleiner und passt gut für Anmerkungen. <br>
-        <strong>Deine Aufgabe:</strong> Schreibe einen Satz mit allen drei Formatierungen, zum Beispiel: <em>"Der starke Held (strong) geht mutig voran, dann sagt er <strong>warte</strong> und denkt daran, dass <small>die Karte wichtig</small> ist"</em>.`,
+      task: `Autor-Update: Mit Formatierung lenkst du die Aufmerksamkeit. <br>
+        So sieht ein korrektes Tag-Paar aus: <code class="inline-code">&lt;strong&gt;Stark&lt;/strong&gt;</code>. <br>
+        <span class="important">&lt;strong&gt;</span> markiert wichtige Wörter, <span class="important">&lt;em&gt;</span> betont und <span class="important">&lt;small&gt;</span> fügt kleinen Zusatztext hinzu. <br>
+        <span class="punch">Tipp:</span> Nutze <code class="inline-code">&lt;small&gt;</code> für Fußnoten und Hinweise, nicht für wichtige Hauptpunkte. <br>
+        <strong>Deine Aufgabe:</strong> Formatiere diesen Satz mit allen drei Tags, z. B. <em>"Der <strong>mutige</strong> Entdecker findet <em>geheime</em> Hinweise und schreibt sie in ein <small>Notizbuch</small>"</em>.`,
+
 
 
       starter: 'Der mutige Entdecker fand eine seltene Karte im verstaubten Buch.',
