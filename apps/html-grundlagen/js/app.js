@@ -85,7 +85,31 @@
     },
     {
       id: '2',
-      title: '2. Überschriften & Absätze',
+      title: '2. HTML-Dokumentaufbau: html/head/body',
+      kind: 'info',
+      text: `Jetzt tauchst du tiefer in die Webseite als Ganzes ein!<br>
+        <span class="important">&lt;html&gt;</span> ist die äußere Hülle, damit der Browser weiß: Hier beginnt ein HTML-Dokument.<br>
+        <span class="important">&lt;head&gt;</span> enthält unsichtbare Infos: Titel, Schriftarten, Meta-Angaben. Die Besucher sehen das *nicht direkt*, der Browser aber schon.<br>
+        <span class="important">&lt;body&gt;</span> enthält alles, was sichtbar ist: Texte, Bilder, Links – also das, was Kinder auf der Seite lesen und klicken.<br>
+        <br>
+        Beispiel:
+        <pre class="code">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Meine Erste Seite&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Willkommen!&lt;/h1&gt;
+    &lt;p&gt;Hier lerne ich HTML.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+        <span class="punch">Merke:</span> Ohne &lt;html&gt; funktioniert die Seite trotzdem manchmal, aber mit dem korrekten Aufbau verstehen Browser und Lehrkräfte sofort, was du meintest.<br>
+        <strong>In den folgenden Modulen wirst du den &lt;body&gt;-Bereich füllen. Es ist okay, wenn &lt;html&gt; und &lt;head&gt; nicht in deinem Editor auftauchen – konzentriere dich auf die Bausteine im &lt;body&gt;!</strong>`,
+      check: ()=>({ok:true, message:'Struktur ready! Weiter mit Überschrift und Absatz'})
+    },
+    {
+      id: '3',
+      title: '3. Überschriften & Absätze',
       kind: 'editor',
       task: `<span class="important">Überschriften und Absätze sind zwei der wichtigsten Strukturlemente.</span><br>
       Denn sie machen Text lesbar und helfen, Inhalte zu finden. <br>
@@ -113,8 +137,8 @@
       }
     },
     {
-      id: '3',
-      title: '3. Ungeordnete & geordnete Listen',
+      id: '4',
+      title: '4. Ungeordnete & geordnete Listen',
       kind: 'editor',
       task: `Abenteuer-Modus: Du bist Schatzsucher und sortierst deine Entdeckungen. <br>
         <span class="important">Das Tag <code class="inline-code">&lt;ul&gt;</code> steht für unordered list (ungeordnete Liste).</span><br>
@@ -145,8 +169,8 @@
       }
     },
     {
-      id: '4',
-      title: '4. Links setzen',
+      id: '5',
+      title: '5. Links setzen',
       kind: 'editor',
       task: `Klick-Modus: Du baust Wegweiser für deine Leser. <br>
         <span class="important">Das Tag <code class="inline-code">&lt;a&gt;</code> steht für anchor (Anker), es verbindet Seiten.</span><br>
@@ -166,8 +190,8 @@
       }
     },
     {
-      id: '5',
-      title: '5. Bilder einbinden',
+      id: '6',
+      title: '6. Bilder einbinden',
       kind: 'editor',
       task: `Bild-Reporter: Ein Bild macht deine Seite lebendig. <br>
         <span class="important">Das Tag <code class="inline-code">&lt;img&gt;</code> steht für image (Bild).</span><br>
@@ -189,8 +213,8 @@
       }
     },
     {
-      id: '6',
-      title: '6. Text formatieren',
+      id: '7',
+      title: '7. Text formatieren',
       kind: 'editor',
       task: `Autor-Update: Mit Formatierung lenkst du die Aufmerksamkeit. <br>
         <span class="important">Das Tag <code class="inline-code">&lt;strong&gt;</code> heißt strong (stark) und markiert wichtige Wörter.</span><br>
@@ -432,5 +456,20 @@
     setActiveNavLink()
     setActiveSidebarLink()
   })
+
+  const resetButton = document.getElementById('reset-btn')
+  if (resetButton) {
+    resetButton.addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY)
+      localStorage.removeItem(COMPLETED_KEY)
+      completedStations.clear()
+      updateProgress()
+      setActiveSidebarLink()
+      setActiveNavLink()
+      location.hash = '#/start'
+      router()
+    })
+  }
+
   router()
 })()
