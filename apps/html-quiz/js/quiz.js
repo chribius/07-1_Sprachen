@@ -8,6 +8,37 @@
   const modalConfirm   = document.getElementById('modal-confirm')
   const modalCancel    = document.getElementById('modal-cancel')
 
+  // ── Tag-balance checker (arbeitet auf Quelltext, nicht im DOM) ─
+  function checkTagBalance(source) {
+    const VOID = new Set([
+      'area','base','br','col','embed','hr','img','input',
+      'link','meta','param','source','track','wbr',
+    ])
+    // Erfasse alle öffnenden und schließenden Tags (DOCTYPE + Kommentare werden nicht gematcht)
+    const re = /<(\/?)(\s*[a-z][a-z0-9]*)(?:\s[^>]*)?>/gi
+    const stack = []
+    let m
+    while ((m = re.exec(source)) !== null) {
+      const full    = m[0]
+      const closing = m[1] === '/'
+      const tag     = m[2].trim().toLowerCase()
+      if (VOID.has(tag)) continue          // Void-Elemente brauchen kein End-Tag
+      if (full.endsWith('/>')) continue    // Explizit selbstschließend: <br/>
+      if (closing) {
+        if (stack.length === 0)
+          return `Schließendes <code>&lt;/${tag}&gt;</code> erscheint ohne öffnendes Tag.`
+        if (stack[stack.length - 1] !== tag)
+          return `<code>&lt;/${tag}&gt;</code> schließt falsches Tag – erwartet: <code>&lt;/${stack[stack.length - 1]}&gt;</code>.`
+        stack.pop()
+      } else {
+        stack.push(tag)
+      }
+    }
+    if (stack.length > 0)
+      return `<code>&lt;${stack[stack.length - 1]}&gt;</code> wurde nicht geschlossen.`
+    return null   // kein Fehler
+  }
+
   // ── Task definitions ───────────────────────────────────────
   const TASKS = [
     // ── Q1 · MC · AB1 · Was ist HTML? ──────────────────────
@@ -53,9 +84,11 @@
       id: 'q3', type: 'editor', ab: 2,
       competency: 'Überschriften & Absätze',
       timeLimit: 120,
-      question: 'Schreibe eine Webseite mit einer <code>&lt;h1&gt;</code>-Überschrift und mindestens <strong>zwei</strong> <code>&lt;p&gt;</code>-Absätzen.',
+      question: 'Schreibe eine Webseite mit <strong>einer Überschrift</strong> (größte Stufe) und mindestens <strong>zwei Textblöcken</strong>.',
       starter: '',
-      validate(doc) {
+      validate(doc, source) {
+        const balErr = checkTagBalance(source)
+        if (balErr) return { ok: false, msg: balErr }
         if (!doc.querySelector('h1'))
           return { ok: false, msg: 'Eine <code>&lt;h1&gt;</code>-Überschrift fehlt.' }
         if (doc.querySelectorAll('p').length < 2)
@@ -69,9 +102,11 @@
       id: 'q4', type: 'editor', ab: 2,
       competency: 'Listen',
       timeLimit: 120,
-      question: 'Erstelle eine <code>&lt;ul&gt;</code> mit mindestens 3 Einträgen <strong>und</strong> eine <code>&lt;ol&gt;</code> mit mindestens 3 Einträgen.',
+      question: 'Erstelle zwei verschiedene <strong>Listentypen</strong>, jeweils mit mindestens 3 Einträgen: eine unsortierte und eine nummerierte Liste.',
       starter: '',
-      validate(doc) {
+      validate(doc, source) {
+        const balErr = checkTagBalance(source)
+        if (balErr) return { ok: false, msg: balErr }
         if (!doc.querySelector('ul'))
           return { ok: false, msg: '<code>&lt;ul&gt;</code> fehlt.' }
         if (!doc.querySelector('ol'))
@@ -119,9 +154,11 @@
       id: 'q7', type: 'editor', ab: 3,
       competency: 'Textformatierung',
       timeLimit: 120,
-      question: 'Schreibe einen Satz über dein Lieblingshobby. Setze dabei <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code> und <code>&lt;small&gt;</code> so ein, dass sie <strong>inhaltlich sinnvoll</strong> sind.',
+      question: 'Schreibe einen Satz über dein Lieblingshobby. Nutze dabei <strong>Fettdruck, Betonung und kleine Schrift</strong> so, dass sie inhaltlich sinnvoll sind.',
       starter: '',
-      validate(doc) {
+      validate(doc, source) {
+        const balErr = checkTagBalance(source)
+        if (balErr) return { ok: false, msg: balErr }
         if (!doc.querySelector('strong'))
           return { ok: false, msg: '<code>&lt;strong&gt;</code> fehlt.' }
         if (!doc.querySelector('em'))
@@ -150,8 +187,14 @@
         </ul>`,
       starter: '<!doctype html>\n<html lang="de">\n  <head>\n    <title></title>\n  </head>\n  <body>\n\n  </body>\n</html>',
       validate(doc, source) {
+        const balErr = checkTagBalance(source)
+        if (balErr) return { ok: false, msg: balErr }
         if (!/<!doctype/i.test(source))
           return { ok: false, msg: '<code>&lt;!DOCTYPE html&gt;</code> fehlt.' }
+        if (!/<html[\s>]/i.test(source))
+          return { ok: false, msg: '<code>&lt;html&gt;</code>-Element fehlt.' }
+        if (!doc.querySelector('head > title'))
+          return { ok: false, msg: '<code>&lt;title&gt;</code> im <code>&lt;head&gt;</code> fehlt.' }
         if (!doc.querySelector('h1'))
           return { ok: false, msg: '<code>&lt;h1&gt;</code>-Überschrift fehlt.' }
         if (doc.querySelectorAll('p').length < 2)
@@ -176,9 +219,12 @@
 
   // ── State ──────────────────────────────────────────────────
   function freshState() {
-    return { phase: 'start', currentIdx: 0, answers: {}, proUnlocked: false }
+    return { phase: 'start', currentIdx: 0, answers: {}, proUnlocked: false, taskStates: {} }
   }
   let state = freshState()
+
+  // Wird von jedem Renderer gesetzt – speichert Zwischenstand der aktuellen Aufgabe
+  let saveCurrentTask = () => {}
 
   // ── Timer ──────────────────────────────────────────────────
   let timerInterval  = null
@@ -193,7 +239,7 @@
     timerInterval = setInterval(() => {
       timerRemaining--
       onTick(timerRemaining, total)
-      if (timerRemaining <= 0) { stopTimer(); onExpire() }
+      if (timerRemaining === 0) { onExpire() }
     }, 1000)
   }
 
@@ -201,14 +247,16 @@
     const fill  = pane.querySelector('.timer-bar-fill')
     const count = pane.querySelector('.timer-count')
     if (!fill || !count) return
-    fill.style.width = Math.max(0, (remaining / total) * 100) + '%'
+    const isNegative = remaining < 0
+    const absRemaining = Math.abs(remaining)
+    fill.style.width = (absRemaining / total) * 100 + '%'
     fill.className = 'timer-bar-fill' +
-      (remaining <= 20 ? ' low' : '') +
-      (remaining <= 5  ? ' very-low' : '')
-    const absR = Math.max(0, remaining)
-    const m = Math.floor(absR / 60)
-    const s = String(absR % 60).padStart(2, '0')
-    count.textContent = `${m}:${s}`
+      (remaining <= 20 && remaining > 0 ? ' low' : '') +
+      (remaining <= 5 && remaining > 0 ? ' very-low' : '') +
+      (isNegative ? ' timer-overtime' : '')
+    const m = Math.floor(absRemaining / 60)
+    const s = String(absRemaining % 60).padStart(2, '0')
+    count.textContent = isNegative ? `-${m}:${s}` : `${m}:${s}`
   }
 
   function timerExpiredBanner(pane) {
@@ -228,15 +276,31 @@
   }
 
   // ── Helpers ────────────────────────────────────────────────
+  const PREVIEW_CSS = `body{margin:1.2rem;background:#0f172a;color:#e2e8f0;font-family:'Segoe UI',Arial,sans-serif;line-height:1.7;font-size:1.1rem}h1,h2,h3,h4,h5,h6{color:#f1f5f9}a{color:#22d3ee}p{margin:.65rem 0}ul,ol{margin:.65rem 0}li{margin:.35rem 0}img{max-width:100%;height:auto;border-radius:6px}strong{color:#ffd700;font-weight:700}em{color:#ff9999;font-style:italic}small{font-size:.85em}code{background:rgba(100,200,255,0.2);padding:.1rem .3rem;border-radius:3px;color:#aef}`
+
   function makePreview(code) {
-    if (/^\s*<!doctype|^\s*<html/i.test(code.trim())) return code
-    return `<!doctype html><html><head><meta charset="utf-8">
-      <style>body{margin:1.2rem;background:#0f172a;color:#e2e8f0;font-family:Segoe UI,sans-serif;line-height:1.7;font-size:1.1rem}
-      h1,h2,h3{color:#f1f5f9}a{color:#22d3ee}p{margin:.65rem 0}img{max-width:100%;border-radius:6px}</style>
-      </head><body>${code}</body></html>`
+    const styleTag = `<style>${PREVIEW_CSS}</style>`
+    if (/^\s*<!doctype|^\s*<html/i.test(code.trim())) {
+      // Vollständiges HTML-Dokument: Style in <head> injizieren
+      if (/<\/head>/i.test(code)) return code.replace(/<\/head>/i, `${styleTag}</head>`)
+      if (/<head[^>]*>/i.test(code)) return code.replace(/(<head[^>]*>)/i, `$1${styleTag}`)
+      return code
+    }
+    return `<!doctype html><html><head><meta charset="utf-8">${styleTag}</head><body>${code}</body></html>`
+  }
+
+  // ── Shuffle array ────────────────────────────────────────
+  function shuffle(arr) {
+    const copy = [...arr]
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]]
+    }
+    return copy
   }
 
   function advanceOrResults() {
+    saveCurrentTask()                                  // Zustand vor dem Wechsel sichern
     if (state.currentIdx >= TASKS.length - 1) { showResults(); return }
     state.currentIdx++
     const next = TASKS[state.currentIdx]
@@ -317,20 +381,36 @@
 
   // ── Renderer: Multiple Choice ──────────────────────────────
   function renderMC(task) {
-    const pane = paneBase(task)
-    const grid = document.createElement('div')
+    const pane  = paneBase(task)
+    const saved = state.taskStates[task.id]
+    const grid  = document.createElement('div')
     grid.className = 'mc-grid'
 
-    let selected = null
-    task.options.forEach((opt, i) => {
+    // Shuffle – bei Rückkehr dieselbe Reihenfolge wiederherstellen
+    const shuffledIndices = saved?.mcShuffledIndices ?? shuffle([...Array(task.options.length).keys()])
+    const shuffledOptions = shuffledIndices.map(i => ({ opt: task.options[i], origIdx: i }))
+
+    let selected = saved?.mcSelected ?? null
+    let phase    = saved?.phase ?? 'check'
+
+    shuffledOptions.forEach(({ opt, origIdx }) => {
       const card = document.createElement('button')
       card.className = 'mc-card'
+      card.dataset.correctIdx = origIdx
       card.innerHTML = opt
+      // Zustand wiederherstellen
+      if (phase === 'advance') {
+        if (origIdx === task.correct)                       card.classList.add('mc-correct')
+        else if (origIdx === selected && origIdx !== task.correct) card.classList.add('mc-wrong')
+        if (origIdx === selected) card.classList.add('mc-selected')
+      } else if (origIdx === selected) {
+        card.classList.add('mc-selected')
+      }
       card.addEventListener('click', () => {
         if (phase !== 'check') return
         grid.querySelectorAll('.mc-card').forEach(c => c.classList.remove('mc-selected'))
         card.classList.add('mc-selected')
-        selected = i
+        selected = origIdx
       })
       grid.appendChild(card)
     })
@@ -338,18 +418,35 @@
 
     const navDiv = document.createElement('div'); navDiv.className = 'nav-btns'
     const fb     = document.createElement('div'); fb.className = 'feedback-inline'
+    if (saved?.feedbackHtml) fb.innerHTML = saved.feedbackHtml
     const btn    = document.createElement('button')
-    btn.textContent = 'Antwort prüfen'
+    btn.textContent = saved?.btnText ?? 'Antwort prüfen'
     navDiv.appendChild(fb)
     navDiv.appendChild(btn)
     pane.appendChild(navDiv)
 
-    startTimer(task.timeLimit,
-      (rem, tot) => tickBar(pane, rem, tot),
-      ()         => timerExpiredBanner(pane)
-    )
+    if (phase === 'advance') {
+      timerRemaining = saved?.timerSaved ?? 0
+      tickBar(pane, timerRemaining, task.timeLimit)
+      if (saved?.expired) timerExpiredBanner(pane)
+    } else {
+      startTimer(saved?.timerSaved ?? task.timeLimit,
+        (rem, tot) => tickBar(pane, rem, tot),
+        ()         => timerExpiredBanner(pane)
+      )
+    }
 
-    let phase = 'check'
+    saveCurrentTask = () => {
+      state.taskStates[task.id] = {
+        mcShuffledIndices: shuffledIndices,
+        mcSelected: selected, phase,
+        timerSaved: timerRemaining,
+        feedbackHtml: fb.innerHTML,
+        btnText: btn.textContent,
+        expired: !!pane.querySelector('.timer-expired'),
+      }
+    }
+
     btn.addEventListener('click', () => {
       if (phase === 'check') {
         if (selected === null) {
@@ -359,9 +456,10 @@
         const correct = selected === task.correct
         state.answers[task.id] = { correct, inTime: timerRemaining > 0 }
         stopTimer()
-        grid.querySelectorAll('.mc-card').forEach((c, i) => {
-          if (i === task.correct) c.classList.add('mc-correct')
-          else if (i === selected && !correct) c.classList.add('mc-wrong')
+        grid.querySelectorAll('.mc-card').forEach((c) => {
+          const origIdx = parseInt(c.dataset.correctIdx)
+          if (origIdx === task.correct) c.classList.add('mc-correct')
+          else if (origIdx === selected && !correct) c.classList.add('mc-wrong')
         })
         fb.innerHTML = correct
           ? '<span class="status success">✅ Richtig!</span>'
@@ -376,64 +474,87 @@
 
   // ── Renderer: Sort ─────────────────────────────────────────
   function renderSort(task) {
-    const pane = paneBase(task)
-    const ul   = document.createElement('ul')
-    ul.className = 'sort-list'
+    const pane   = paneBase(task)
+    const saved  = state.taskStates[task.id]
+    const container = document.createElement('div')
+    container.className = 'sort-cards'
 
-    let order = task.items.map((_, i) => i) // starts as [0,1,2,3,4]
+    let order = saved?.sortOrder ? [...saved.sortOrder] : task.items.map((_, i) => i)
+    let phase = saved?.phase ?? 'check'
+    const frozen = phase === 'advance'
 
     function renderItems() {
-      ul.innerHTML = ''
+      container.innerHTML = ''
       order.forEach((itemIdx, pos) => {
-        const li = document.createElement('li')
-        li.className  = 'sort-item'
-        li.draggable  = true
-        li.dataset.pos = pos
-        li.innerHTML  = `<span class="drag-handle" aria-hidden="true">⠿</span><span class="sort-label">${task.items[itemIdx]}</span>`
-
-        li.addEventListener('dragstart', e => {
-          e.dataTransfer.setData('text/plain', String(pos))
-          li.classList.add('dragging')
-        })
-        li.addEventListener('dragend',  () => li.classList.remove('dragging'))
-        li.addEventListener('dragover', e => { e.preventDefault(); li.classList.add('drag-over') })
-        li.addEventListener('dragleave',() => li.classList.remove('drag-over'))
-        li.addEventListener('drop', e => {
-          e.preventDefault()
-          li.classList.remove('drag-over')
-          const from = parseInt(e.dataTransfer.getData('text/plain'))
-          if (from === pos) return
-          const [moved] = order.splice(from, 1)
-          order.splice(pos, 0, moved)
-          renderItems()
-        })
-        ul.appendChild(li)
+        const card = document.createElement('div')
+        card.className  = 'sort-card'
+        card.draggable  = !frozen
+        card.dataset.pos = pos
+        card.innerHTML  = `<span class="drag-handle">☰</span><span class="sort-label">${task.items[itemIdx]}</span>`
+        if (frozen) {
+          card.classList.add(order[pos] === task.correctOrder[pos] ? 'sort-correct' : 'sort-wrong')
+        } else {
+          card.addEventListener('dragstart', e => {
+            e.dataTransfer.effectAllowed = 'move'
+            e.dataTransfer.setData('text/plain', String(pos))
+            card.classList.add('dragging')
+          })
+          card.addEventListener('dragend', () => card.classList.remove('dragging'))
+          card.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; card.classList.add('drag-over') })
+          card.addEventListener('dragleave', () => card.classList.remove('drag-over'))
+          card.addEventListener('drop', e => {
+            e.preventDefault()
+            card.classList.remove('drag-over')
+            const from = parseInt(e.dataTransfer.getData('text/plain'))
+            if (from === pos) return
+            const [moved] = order.splice(from, 1)
+            order.splice(pos, 0, moved)
+            renderItems()
+          })
+        }
+        container.appendChild(card)
       })
     }
     renderItems()
-    pane.appendChild(ul)
+    pane.appendChild(container)
 
     const navDiv = document.createElement('div'); navDiv.className = 'nav-btns'
     const fb     = document.createElement('div'); fb.className = 'feedback-inline'
+    if (saved?.feedbackHtml) fb.innerHTML = saved.feedbackHtml
     const btn    = document.createElement('button')
-    btn.textContent = 'Reihenfolge prüfen'
+    btn.textContent = saved?.btnText ?? 'Reihenfolge prüfen'
     navDiv.appendChild(fb)
     navDiv.appendChild(btn)
     pane.appendChild(navDiv)
 
-    startTimer(task.timeLimit,
-      (rem, tot) => tickBar(pane, rem, tot),
-      ()         => timerExpiredBanner(pane)
-    )
+    if (phase === 'advance') {
+      timerRemaining = saved?.timerSaved ?? 0
+      tickBar(pane, timerRemaining, task.timeLimit)
+      if (saved?.expired) timerExpiredBanner(pane)
+    } else {
+      startTimer(saved?.timerSaved ?? task.timeLimit,
+        (rem, tot) => tickBar(pane, rem, tot),
+        ()         => timerExpiredBanner(pane)
+      )
+    }
 
-    let phase = 'check'
+    saveCurrentTask = () => {
+      state.taskStates[task.id] = {
+        sortOrder: [...order], phase,
+        timerSaved: timerRemaining,
+        feedbackHtml: fb.innerHTML,
+        btnText: btn.textContent,
+        expired: !!pane.querySelector('.timer-expired'),
+      }
+    }
+
     btn.addEventListener('click', () => {
       if (phase === 'check') {
         const correct = JSON.stringify(order) === JSON.stringify(task.correctOrder)
         state.answers[task.id] = { correct, inTime: timerRemaining > 0 }
         stopTimer()
-        ul.querySelectorAll('.sort-item').forEach((li, pos) => {
-          li.classList.add(order[pos] === task.correctOrder[pos] ? 'sort-correct' : 'sort-wrong')
+        container.querySelectorAll('.sort-card').forEach((card, pos) => {
+          card.classList.add(order[pos] === task.correctOrder[pos] ? 'sort-correct' : 'sort-wrong')
         })
         fb.innerHTML = correct
           ? '<span class="status success">✅ Perfekte Reihenfolge!</span>'
@@ -448,23 +569,58 @@
 
   // ── Renderer: Editor ───────────────────────────────────────
   function renderEditor(task) {
-    const pane = paneBase(task)
-    const cols = document.createElement('div'); cols.className = 'cols'
-    const left = document.createElement('div'); left.className = 'box'
-    const right= document.createElement('div'); right.className = 'box'
+    const pane  = paneBase(task)
+    const saved = state.taskStates[task.id]
+    const cols  = document.createElement('div'); cols.className = 'cols'
+    const left  = document.createElement('div'); left.className = 'box'
+    const right = document.createElement('div'); right.className = 'box'
 
-    const ta   = document.createElement('textarea')
-    ta.value      = task.starter || ''
-    ta.spellcheck = false
+    const ta = document.createElement('textarea')
+    ta.value       = saved?.editorValue ?? (task.starter || '')
+    ta.spellcheck  = false
     ta.autocomplete = 'off'
+
+    // Tab support + auto-indent
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Tab') {
+        e.preventDefault()
+        const start = ta.selectionStart
+        const end   = ta.selectionEnd
+        ta.value = ta.value.slice(0, start) + '\t' + ta.value.slice(end)
+        ta.selectionStart = ta.selectionEnd = start + 1
+      } else if (e.key === 'Enter') {
+        const lines = ta.value.slice(0, ta.selectionStart).split('\n')
+        const currentLine = lines[lines.length - 1]
+        const indent = currentLine.match(/^(\s*)/)[1]
+        setTimeout(() => {
+          if (ta.selectionStart === ta.selectionEnd) {
+            const s = ta.selectionStart
+            if (ta.value[s - 1] === '\n' && ta.value[s] !== '\t' && ta.value[s] !== ' ') {
+              ta.value = ta.value.slice(0, s) + indent + ta.value.slice(s)
+              ta.selectionStart = ta.selectionEnd = s + indent.length
+            }
+          }
+        }, 10)
+      }
+    })
     left.appendChild(ta)
 
     const btnRow   = document.createElement('div'); btnRow.className = 'btn-row'
     const checkBtn = document.createElement('button'); checkBtn.textContent = 'Code prüfen'
     const nextBtn  = document.createElement('button')
     nextBtn.textContent = state.currentIdx === TASKS.length - 1 ? 'Auswertung anzeigen' : 'Weiter ›'
-    nextBtn.className   = 'secondary'
     const fb = document.createElement('div'); fb.className = 'feedback-inline'
+
+    // Zustand wiederherstellen
+    let phase = saved?.phase ?? 'check'
+    if (phase === 'advance') {
+      nextBtn.className = ''         // primary
+      checkBtn.disabled = true
+    } else {
+      nextBtn.className = 'secondary'
+    }
+    if (saved?.feedbackHtml) fb.innerHTML = saved.feedbackHtml
+
     btnRow.appendChild(checkBtn)
     btnRow.appendChild(nextBtn)
     btnRow.appendChild(fb)
@@ -485,10 +641,25 @@
     ta.addEventListener('input', () => { clearTimeout(debounce); debounce = setTimeout(updatePreview, 250) })
     updatePreview()
 
-    startTimer(task.timeLimit,
-      (rem, tot) => tickBar(pane, rem, tot),
-      ()         => timerExpiredBanner(pane)
-    )
+    if (phase === 'advance') {
+      timerRemaining = saved?.timerSaved ?? 0
+      tickBar(pane, timerRemaining, task.timeLimit)
+      if (saved?.expired) timerExpiredBanner(pane)
+    } else {
+      startTimer(saved?.timerSaved ?? task.timeLimit,
+        (rem, tot) => tickBar(pane, rem, tot),
+        ()         => timerExpiredBanner(pane)
+      )
+    }
+
+    saveCurrentTask = () => {
+      state.taskStates[task.id] = {
+        editorValue: ta.value, phase,
+        timerSaved: timerRemaining,
+        feedbackHtml: fb.innerHTML,
+        expired: !!pane.querySelector('.timer-expired'),
+      }
+    }
 
     checkBtn.addEventListener('click', () => {
       const parser = new DOMParser()
@@ -497,7 +668,10 @@
       if (result.ok) {
         fb.innerHTML = '<span class="status success">✅ Richtig!</span>'
         state.answers[task.id] = { correct: true, inTime: timerRemaining > 0 }
-        nextBtn.className = '' // promote to primary style
+        stopTimer()                    // Timer stoppen sobald Aufgabe gelöst
+        phase             = 'advance'
+        nextBtn.className = ''         // primary
+        checkBtn.disabled = true
       } else {
         fb.innerHTML = `<span class="status error">❌ ${result.msg}</span>`
         if (!state.answers[task.id])
@@ -508,7 +682,6 @@
     nextBtn.addEventListener('click', () => {
       if (!state.answers[task.id])
         state.answers[task.id] = { correct: false, inTime: false }
-      stopTimer()
       advanceOrResults()
     })
   }
@@ -564,8 +737,7 @@
   }
 
   // ── Modal: Pro-task warning ────────────────────────────────
-  function showProWarning() {
-    overlayEl.classList.remove('hidden')
+  function showProWarning() {    stopTimer()                                        // Timer pausieren während Modal sichtbar    overlayEl.classList.remove('hidden')
     modalConfirm.onclick = () => {
       overlayEl.classList.add('hidden')
       state.proUnlocked = true
