@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <base href="./">
+    <title>CSS-Grundlagen - Designmission Schatzsuche</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="title-wrap">
+        <h1>CSS-Mission: Design auf der Schatzinsel</h1>
+        <p>7 Lernstationen für Klasse 7: gestalten, ausprobieren, direkt sehen.</p>
+      </div>
+      <nav class="topnav" aria-label="Sektionen">
+        <a href="#/start">Start</a>
+        <a href="#/mission">Mission</a>
+        <a href="#/editor">Editor</a>
+        <a href="#/hilfe">Hilfe</a>
+      </nav>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="Lernmodule">
+        <h2>Lernstationen</h2>
+        <ul>
+          <li><a href="#/modul/1">1. Was ist CSS?</a></li>
+          <li><a href="#/modul/2">2. Inhalt und Design trennen</a></li>
+          <li><a href="#/modul/3">3. CSS-Syntax und Semantik</a></li>
+          <li><a href="#/modul/4">4. Selektoren, Eigenschaften, Werte</a></li>
+          <li><a href="#/modul/5">5. Wichtige Eigenschaften</a></li>
+          <li><a href="#/modul/6">6. Werte sinnvoll wählen</a></li>
+          <li><a href="#/modul/7">7. Responsive Webdesign</a></li>
+          <li><a href="#/modul/abschluss">Abschluss</a></li>
+        </ul>
+        <div id="progress"></div>
+        <button id="reset-btn" class="secondary" style="font-size:0.9rem;margin-top:0.5rem;">Alles zurücksetzen</button>
+      </aside>
+
+      <main id="app" class="content"></main>
+    </div>
+
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
