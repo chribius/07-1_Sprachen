@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'apps/html-grundlagen/**'
+      - 'apps/html-quiz/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -11,7 +12,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: deploy-html-grundlagen
+  group: deploy-pages
   cancel-in-progress: true
 
 jobs:
@@ -23,11 +24,16 @@ jobs:
           fetch-depth: 0
 
       - name: Sync app to docs
+          - name: Sync apps to docs
         run: |
           set -e
           rm -rf docs/html-grundlagen
           mkdir -p docs/html-grundlagen
           cp -r apps/html-grundlagen/* docs/html-grundlagen/
+
+            rm -rf docs/html-quiz
+            mkdir -p docs/html-quiz
+            cp -r apps/html-quiz/* docs/html-quiz/
 
       - name: Commit and push docs
         run: |
@@ -35,9 +41,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/html-grundlagen
+                    git add docs/html-grundlagen docs/html-quiz
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
           git commit -m "Update docs/html-grundlagen"
+                    git commit -m "Deploy html-grundlagen + html-quiz"
           git push
