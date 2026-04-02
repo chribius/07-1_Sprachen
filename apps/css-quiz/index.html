@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <base href="./">
+    <title>CSS-Quiz – Wissens-Check</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="title-wrap">
+        <h1>CSS-Quiz</h1>
+        <p>Design auf der Schatzinsel – Wissens-Check</p>
+      </div>
+      <div id="quiz-meta" class="quiz-meta"></div>
+    </header>
+
+    <main id="app" class="quiz-content"></main>
+
+    <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-box">
+        <h2 id="modal-title">⚠️ Profi-Aufgabe starten?</h2>
+        <p>Wenn du zur <strong>Profi-Aufgabe</strong> wechselst, kannst du <strong>nicht mehr zu den Einzelaufgaben zurueckkehren</strong>.</p>
+        <p>Bist du bereit?</p>
+        <div class="modal-actions">
+          <button id="modal-confirm">Ja, ich bin bereit!</button>
+          <button id="modal-cancel" class="secondary">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/quiz.js" defer></script>
+  </body>
+</html>

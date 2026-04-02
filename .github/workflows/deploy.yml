@@ -5,6 +5,8 @@ on:
     paths:
       - 'apps/html-grundlagen/**'
       - 'apps/html-quiz/**'
+      - 'apps/css-grundlagen/**'
+      - 'apps/css-quiz/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -34,15 +36,23 @@ jobs:
           mkdir -p docs/html-quiz
           cp -r apps/html-quiz/* docs/html-quiz/
 
+          rm -rf docs/css-grundlagen
+          mkdir -p docs/css-grundlagen
+          cp -r apps/css-grundlagen/* docs/css-grundlagen/
+
+          rm -rf docs/css-quiz
+          mkdir -p docs/css-quiz
+          cp -r apps/css-quiz/* docs/css-quiz/
+
       - name: Commit and push docs
         run: |
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/html-grundlagen docs/html-quiz
+          git add docs/html-grundlagen docs/html-quiz docs/css-grundlagen docs/css-quiz
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Deploy html-grundlagen + html-quiz"
+          git commit -m "Deploy html-grundlagen + html-quiz + css-grundlagen + css-quiz"
           git push
