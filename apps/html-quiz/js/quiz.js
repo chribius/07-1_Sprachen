@@ -177,13 +177,12 @@
       question: `Erstelle eine <strong>vollständige HTML-Seite</strong> zum Thema „Meine Lieblingswebseite".<br>
         Die Seite muss enthalten:
         <ul class="req-list">
-          <li>Korrekte Grundstruktur (<code>&lt;!DOCTYPE&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>)</li>
-          <li>Eine <code>&lt;h1&gt;</code>-Überschrift</li>
-          <li>Mindestens zwei <code>&lt;p&gt;</code>-Absätze</li>
-          <li>Eine Liste (<code>&lt;ul&gt;</code> oder <code>&lt;ol&gt;</code>) mit mind. 3 Einträgen</li>
-          <li>Einen Link mit <code>href</code></li>
-          <li>Ein <code>&lt;img&gt;</code> mit <code>src</code> und <code>alt</code></li>
-          <li>Mindestens <code>&lt;strong&gt;</code> oder <code>&lt;em&gt;</code></li>
+          <li>Eine große Hauptüberschrift</li>
+          <li>Mindestens zwei sinnvolle Textabschnitte</li>
+          <li>Eine Liste mit mindestens 3 Einträgen</li>
+          <li>Mindestens einen Link</li>
+          <li>Mindestens ein Bild mit sinnvoller Beschreibung</li>
+          <li>Mindestens eine sinnvolle Textformatierung (fett, hervorgehoben, kleine Schrift)</li>
         </ul>`,
       starter: '<!doctype html>\n<html lang="de">\n  <head>\n    <title></title>\n  </head>\n  <body>\n\n  </body>\n</html>',
       validate(doc, source) {
@@ -219,7 +218,7 @@
 
   // ── State ──────────────────────────────────────────────────
   function freshState() {
-    return { phase: 'start', currentIdx: 0, answers: {}, proUnlocked: false, taskStates: {} }
+    return { phase: 'start', currentIdx: 0, answers: {}, proUnlocked: false, taskStates: {}, pendingProIdx: null }
   }
   let state = freshState()
 
@@ -300,12 +299,19 @@
   }
 
   function advanceOrResults() {
-    saveCurrentTask()                                  // Zustand vor dem Wechsel sichern
-    if (state.currentIdx >= TASKS.length - 1) { showResults(); return }
-    state.currentIdx++
-    const next = TASKS[state.currentIdx]
-    if (next.isPro && !state.proUnlocked) showProWarning()
-    else showTask()
+    saveCurrentTask() // Zustand vor dem Wechsel sichern
+    const nextIdx = state.currentIdx + 1
+    if (nextIdx >= TASKS.length) { showResults(); return }
+
+    const next = TASKS[nextIdx]
+    if (next.isPro && !state.proUnlocked) {
+      state.pendingProIdx = nextIdx
+      showProWarning(nextIdx)
+      return
+    }
+
+    state.currentIdx = nextIdx
+    showTask()
   }
 
   function updateMeta() {
@@ -623,8 +629,8 @@
 
     btnRow.appendChild(checkBtn)
     btnRow.appendChild(nextBtn)
-    btnRow.appendChild(fb)
     left.appendChild(btnRow)
+    left.appendChild(fb)
 
     right.innerHTML = '<h3>Live-Vorschau</h3>'
     const iframe = document.createElement('iframe')
@@ -681,7 +687,7 @@
 
     nextBtn.addEventListener('click', () => {
       if (!state.answers[task.id])
-        state.answers[task.id] = { correct: false, inTime: false }
+        state.answers[task.id] = { correct: false, skipped: true }
       advanceOrResults()
     })
   }
@@ -706,11 +712,14 @@
       const ans    = state.answers[task.id]
       const ok     = ans?.correct
       const inTime = ans?.inTime
+      const timeText = (!ans || ans.skipped)
+        ? 'nicht bearbeitet'
+        : (inTime ? '⏱ innerhalb der Zeit' : 'nach Ablauf der Zeit')
       return `<div class="result-row ${ok ? 'r-ok' : 'r-fail'}">
         <span class="r-icon">${ok ? '✅' : '❌'}</span>
         <div class="r-info">
           <strong>${task.competency}${task.isPro ? ' ⭐' : ''}</strong>
-          <span class="r-meta">AB${task.ab} &nbsp;·&nbsp; ${inTime ? '⏱ innerhalb der Zeit' : 'nach Ablauf der Zeit'}</span>
+          <span class="r-meta">AB${task.ab} &nbsp;·&nbsp; ${timeText}</span>
         </div>
         <span class="ab-badge">AB${task.ab}</span>
       </div>`
@@ -737,15 +746,19 @@
   }
 
   // ── Modal: Pro-task warning ────────────────────────────────
-  function showProWarning() {    stopTimer()                                        // Timer pausieren während Modal sichtbar    overlayEl.classList.remove('hidden')
+  function showProWarning(nextIdx) {
+    stopTimer() // Timer pausieren waehrend Modal sichtbar
+    overlayEl.classList.remove('hidden')
     modalConfirm.onclick = () => {
       overlayEl.classList.add('hidden')
       state.proUnlocked = true
+      state.currentIdx = nextIdx
+      state.pendingProIdx = null
       showTask()
     }
     modalCancel.onclick = () => {
       overlayEl.classList.add('hidden')
-      state.currentIdx-- // go back to last regular task
+      state.pendingProIdx = null
       showTask()
     }
   }
