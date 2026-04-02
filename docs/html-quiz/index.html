@@ -3,37 +3,36 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Relativer base href: funktioniert lokal und wenn die App in docs/html-quiz/ liegt -->
-  <base href="./">
-    <title>HTML Quiz - 7. Klasse</title>
-    <style>body{font-family:system-ui;padding:1rem} .card{background:#fff;padding:1rem;border-radius:6px;max-width:600px;margin:0 auto}</style>
+    <base href="./">
+    <title>HTML-Quiz – Wissens-Check</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <div class="card">
-      <h1>Kurzes Quiz</h1>
-      <div id="question"></div>
-      <div id="controls"></div>
-      <div id="result" style="margin-top:.8rem;font-weight:600"></div>
+    <header class="main-header">
+      <div class="title-wrap">
+        <h1>HTML-Quiz</h1>
+        <p>Expedition zur Code-Insel – Wissens-Check</p>
+      </div>
+      <div id="quiz-meta" class="quiz-meta"></div>
+    </header>
+
+    <main id="app" class="quiz-content"></main>
+
+    <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-box">
+        <h2 id="modal-title">⚠️ Profi-Aufgabe starten?</h2>
+        <p>Wenn du zur <strong>Profi-Aufgabe</strong> wechselst, kannst du <strong>nicht mehr zu den Einzelaufgaben zurückkehren</strong>.</p>
+        <p>Bist du bereit?</p>
+        <div class="modal-actions">
+          <button id="modal-confirm">Ja, ich bin bereit!</button>
+          <button id="modal-cancel" class="secondary">Abbrechen</button>
+        </div>
+      </div>
     </div>
-    <script>
-      const questions = [
-        {q:'Welches Element für einen Absatz?',opts:['<div>','<p>','<span>'],a:1},
-        {q:'Wie schreibt man ein Link-Tag?',opts:['<a href="...">','<link>','<href>'],a:0}
-      ]
-      let idx=0
-      const qEl=document.getElementById('question'), cEl=document.getElementById('controls'), rEl=document.getElementById('result')
-      function show(){
-        rEl.textContent=''
-        qEl.innerHTML=`<h2>Frage ${idx+1}</h2><p>${questions[idx].q}</p>`
-        cEl.innerHTML = questions[idx].opts.map((o,i)=>`<button data-i="${i}">${o}</button>`).join(' ')
-        cEl.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>{
-          const sel=Number(e.target.dataset.i)
-          if(sel===questions[idx].a){ rEl.textContent='Richtig!'; rEl.style.color='green' }
-          else { rEl.textContent='Das ist falsch.'; rEl.style.color='crimson' }
-          setTimeout(()=>{ idx = (idx+1)%questions.length; show() },1000)
-        }))
-      }
-      show()
-    </script>
+
+    <script src="js/quiz.js" defer></script>
   </body>
 </html>
